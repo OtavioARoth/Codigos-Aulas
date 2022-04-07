@@ -1,0 +1,48 @@
+create table faculdades ( 
+id_faculdades int primary key auto_increment, 
+nome varchar (65) not null, email varchar(60),localizacao varchar (80),
+municipio varchar (45) not null,
+estado varchar (45)not null
+);
+
+
+
+DELIMITER //
+
+create procedure select_faculdades ()
+begin 
+select * from faculdade ;
+end //
+DELIMITER ;
+
+
+DELIMITER //
+create procedure insert_(nome_ varchar(65),
+email_ varchar(60),localizacao_ varchar(80),municipio_ varchar(65),estado_ varchar(65))
+begin 
+insert into faculdades ( nome,email,localizacao,municipio,estado) values 
+(nome_,email_,localizacao_,municipio_,estado_);
+
+end//
+DELIMITER ;
+call insert_('unicesumar', 'unicesumar@edu.br', 'rua 13', 'PG', 'PR');	
+alter table faculdades add data_criacao date;
+delimiter //
+create trigger tk_insert_date before
+insert on faculdades
+for each row
+set new.data_criacao = now ();
+delimiter ;
+
+delimiter //
+create trigger tk_backup_ before delete on faculdade s
+for each row
+begin 
+insert into deletadas (id_f, nome) values
+(old.id_faculdades, old.nome);
+end//
+delimiter ;
+call select_faculdades();
+
+delete from faculdades where id_faculdades =1;
+select *from deletadas 
